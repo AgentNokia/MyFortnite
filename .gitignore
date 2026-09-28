@@ -1,0 +1,23 @@
+# Временные файлы сборки и кэш
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Файлы Visual Studio и компилятора
+.vs/
+*.sln
+*.vcxproj
+*.filters
+*.user
+*.suo
+*.db
+*.opendb
+
+# Локальные настройки пользователя
+.idea/
+.vscode/
+
+# Если в проекте будут тяжелые ассеты, их тоже обычно не пушат в базовый Git
+Content/
