@@ -6,18 +6,25 @@
 #include "UObject/Object.h"
 #include "QuestCondition.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnQuestConditionCompleted)
 /**
- * 
+ *
  */
-UCLASS(Abstract)
+UCLASS(Abstract, Blueprintable, BlueprintType)
 class MYFORTNITE_API UQuestCondition : public UObject
 {
 	GENERATED_BODY()
 public:
-	virtual void StartCondition() PURE_VIRTUAL(StartCondition,);
-	virtual void StopCondition() PURE_VIRTUAL(StopCondition,);
+	virtual void StartCondition() PURE_VIRTUAL(StartCondition, );
+	virtual void StopCondition() PURE_VIRTUAL(StopCondition, );
+	UFUNCTION(BlueprintCallable)
+	bool IsCompleted() const { return bCompleted; }
+	FOnQuestConditionCompleted OnQuestConditionCompleted;
 protected:
-	UPROPERTY(BlueprintReadOnly)
+	void Complete();
+	bool bCompleteOnExit = false;
+private:
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess))
 	bool bCompleted = false;
-	
+
 };

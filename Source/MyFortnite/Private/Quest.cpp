@@ -9,7 +9,7 @@
 // Sets default values
 AQuest::AQuest()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -22,10 +22,14 @@ void AQuest::BeginPlay()
 	{
 		QuestComponent->RegisterQuest(this);
 	}
-	for (const TSubclassOf<UQuestCondition> &ConditionTemplate : QuestSettings->StartConditions)
+	for (const TSubclassOf<UQuestCondition>& ConditionTemplate : QuestSettings->StartConditions)
 	{
-		UQuestCondition *QuestCondition = NewObject<UQuestCondition>(this, ConditionTemplate);
+		if (!ensureMsgf(ConditionTemplate, TEXT("bas setup for quest %s"), *GetNameSafe(this)))
+			return;
+
+		UQuestCondition* QuestCondition = NewObject<UQuestCondition>(this, ConditionTemplate);
 		QuestCondition->StartCondition();
+		QuestCondition->OnQuestConditionCompleted.AddUObject(this, &AQuest::UpdateStartStatus);
 		StartConditions.Add(QuestCondition);
 	}
 }
@@ -37,3 +41,40 @@ void AQuest::Tick(float DeltaTime)
 
 }
 
+void AQuest::UpdateStartStatus()
+{
+	for (UQuestCondition* Condition : StartConditions)
+	{
+		if (!ensure(Condition))
+			return;
+		if (!Condition->IsCompleted())
+		{
+			return;
+		}
+	}
+	QuestStatus = EQuestStatus::Started;
+	OnQuestStatusChanged.Broadcast(QuestStatus);
+	for (const TSubclassOf<UQuestCondition>& ConditionTemplate : QuestSettings->StartConditions)
+	{
+		if (!ensureMsgf(ConditionTemplate, TEXT("bas setup for quest %s"), *GetNameSafe(this)))
+			return;
+		UQuestCondition* QuestCondition = NewObject<UQuestCondition>(this, ConditionTemplate);
+		QuestCondition->StartCondition();
+		QuestCondition->OnQuestConditionCompleted.AddUObject(this, &AQuest::UpdateEndStatus);
+		EndConditions.Add(QuestCondition);
+	}
+}
+void AQuest::UpdateEndStatus()
+{
+	for (UQuestCondition* Condition : EndConditions)
+	{
+		if (!ensure(Condition))
+			return;
+		if (!Condition->IsCompleted())
+		{
+			return;
+		}
+	}
+	QuestStatus = EQuestStatus::Completed;
+	OnQuestStatusChanged.Broadcast(QuestStatus);
+}

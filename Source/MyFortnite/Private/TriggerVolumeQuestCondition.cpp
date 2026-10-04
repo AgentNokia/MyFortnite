@@ -8,18 +8,24 @@
 void UTriggerVolumeQuestCondition::StartCondition()
 {
   AQuest *Quest = Cast<AQuest>(GetOuter());
-  Quest->OnActorBeginOverlap.AddDynamic(this, &UTriggerVolumeQuestCondition::StartOverlap);
+  if (bCompleteOnExit)
+    Quest->OnActorEndOverlap.AddDynamic(this, &UTriggerVolumeQuestCondition::StartOverlap);
+  else
+    Quest->OnActorBeginOverlap.AddDynamic(this, &UTriggerVolumeQuestCondition::StartOverlap);
 }
 
 void UTriggerVolumeQuestCondition::StopCondition()
 {
+  AQuest *Quest = Cast<AQuest>(GetOuter());
+  Quest->OnActorBeginOverlap.RemoveDynamic(this, &UTriggerVolumeQuestCondition::StartOverlap);
+  Quest->OnActorEndOverlap.RemoveDynamic(this, &UTriggerVolumeQuestCondition::StartOverlap);
 }
 
 void UTriggerVolumeQuestCondition::StartOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
   if (OtherActor->ActorHasTag(OtherTag))
   {
-    bCompleted = true;
+    Complete();
   }
 
 }

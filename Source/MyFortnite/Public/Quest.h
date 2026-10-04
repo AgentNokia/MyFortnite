@@ -8,12 +8,23 @@
 
 class UQuestSettings;
 class UQuestCondition;
+
+UENUM()
+enum class EQuestStatus : uint8
+{
+	WaitingForStart,
+	Started,
+	Completed,
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestStatusChanged, EQuestStatus, NewStatus);
+
 UCLASS()
 class MYFORTNITE_API AQuest : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AQuest();
 
@@ -21,9 +32,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	void UpdateStartStatus();
+	void UpdateEndStatus();
+	EQuestStatus GetQuestStatus() const { return QuestStatus; }
+
+	FOnQuestStatusChanged OnQuestStatusChanged;
 protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UQuestSettings> QuestSettings;
@@ -32,4 +48,6 @@ protected:
 	TArray<UQuestCondition*> StartConditions;
 	UPROPERTY()
 	TArray<TObjectPtr<UQuestCondition>> EndConditions;
+	UPROPERTY(BlueprintReadOnly)
+	EQuestStatus QuestStatus = EQuestStatus::WaitingForStart;
 };

@@ -3,3 +3,9 @@
 
 #include "QuestCondition.h"
 
+void UQuestCondition::Complete()
+{
+	bCompleted = true;
+	OnQuestConditionCompleted.Broadcast();
+  StopCondition();
+}

@@ -26,13 +26,13 @@ void UQuestSystemComponent::BeginPlay()
 	{
 		ActiveQuests.AddUnique(*It);
 	}
-	for (const TSubclassOf<AQuest> &QuestClass : Quests)
+	for (const TSubclassOf<AQuest>& QuestClass : Quests)
 	{
-		AQuest *Quest = GetWorld()->SpawnActor<AQuest>(QuestClass);
+		AQuest* Quest = GetWorld()->SpawnActor<AQuest>(QuestClass);
 		ActiveQuests.Add(Quest);
 	}
 	// ...
-	
+
 }
 
 
@@ -44,8 +44,19 @@ void UQuestSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	// ...
 }
 
-void UQuestSystemComponent::RegisterQuest(AQuest *NewQuest)
+void UQuestSystemComponent::GetActiveAndStartedQuests(TArray<AQuest*>& OutQuests)
 {
-ActiveQuests.AddUnique(NewQuest);
+	for (AQuest* Quest : ActiveQuests)
+	{
+		if (Quest->GetQuestStatus() == EQuestStatus::Started)
+		{
+			OutQuests.Add(Quest);
+		}
+	}
 }
 
+
+void UQuestSystemComponent::RegisterQuest(AQuest* NewQuest)
+{
+	ActiveQuests.AddUnique(NewQuest);
+}
