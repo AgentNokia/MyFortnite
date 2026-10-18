@@ -23,8 +23,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UFUNCTION(BlueprintCallable)
 	void GetActiveAndStartedQuests(TArray<AQuest*>& OutQuests);
 	void RegisterQuest(AQuest *NewQuest);
+
 protected:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<AQuest>> Quests;

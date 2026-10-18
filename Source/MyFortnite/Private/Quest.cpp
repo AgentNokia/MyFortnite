@@ -54,7 +54,7 @@ void AQuest::UpdateStartStatus()
 	}
 	QuestStatus = EQuestStatus::Started;
 	OnQuestStatusChanged.Broadcast(QuestStatus);
-	for (const TSubclassOf<UQuestCondition>& ConditionTemplate : QuestSettings->StartConditions)
+	for (const TSubclassOf<UQuestCondition>& ConditionTemplate : QuestSettings->EndConditions)
 	{
 		if (!ensureMsgf(ConditionTemplate, TEXT("bas setup for quest %s"), *GetNameSafe(this)))
 			return;

@@ -19,7 +19,12 @@ public:
 
 	UFUNCTION()
 	void StartOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	UFUNCTION()
+	void StopOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bCompleteOnExit = false;
 
 	UPROPERTY(EditAnywhere)
 	FName OtherTag;
+
 };

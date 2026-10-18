@@ -38,10 +38,12 @@ public:
 	void UpdateStartStatus();
 	void UpdateEndStatus();
 	EQuestStatus GetQuestStatus() const { return QuestStatus; }
+	UQuestSettings* GetQuestSettings() const { return QuestSettings; }
+
 
 	FOnQuestStatusChanged OnQuestStatusChanged;
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UQuestSettings> QuestSettings;
 
 	UPROPERTY()

@@ -22,7 +22,6 @@ public:
 	FOnQuestConditionCompleted OnQuestConditionCompleted;
 protected:
 	void Complete();
-	bool bCompleteOnExit = false;
 private:
 	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess))
 	bool bCompleted = false;
