@@ -6,6 +6,10 @@
 #include "QuestSystemComponent.h"
 #include "GameFramework/GameModeBase.h"
 
+int32 bDebugInstantFinish = 0;
+FAutoConsoleVariableRef CVarDebugInstantFinish(TEXT("quest.instantFinish"), 
+	bDebugInstantFinish, TEXT("Debug instantly finish quest"), ECVF_Cheat);
+
 // Sets default values
 AQuest::AQuest()
 {
@@ -52,7 +56,11 @@ void AQuest::UpdateStartStatus()
 			return;
 		}
 	}
+	
 	QuestStatus = EQuestStatus::Started;
+  UE_LOG(LogQuest, Log, TEXT("Quest started"));
+	if (bDebugInstantFinish) QuestStatus = EQuestStatus::Completed;
+
 	OnQuestStatusChanged.Broadcast(QuestStatus);
 	for (const TSubclassOf<UQuestCondition>& ConditionTemplate : QuestSettings->EndConditions)
 	{
@@ -76,5 +84,6 @@ void AQuest::UpdateEndStatus()
 		}
 	}
 	QuestStatus = EQuestStatus::Completed;
+  UE_LOG(LogQuest, Log, TEXT("Quest completed"));
 	OnQuestStatusChanged.Broadcast(QuestStatus);
 }
